@@ -50,3 +50,14 @@ func (d *Decoder) Decode(data []byte, frameSize int, fec bool) ([]int16, error) 
 	}
 	return output[:ret], nil
 }
+
+func CountFrames(data []byte) (int, error) {
+	dataPtr := (*C.uchar)(unsafe.Pointer(&data[0]))
+	cLen := C.opus_int32(len(data))
+
+	cRet := C.opus_packet_get_nb_frames(dataPtr, cLen)
+	if err := getErr(cRet); err != nil {
+		return 0, err
+	}
+	return int(cRet), nil
+}
