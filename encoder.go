@@ -1,4 +1,4 @@
-package opus
+package gopus
 
 // #cgo pkg-config: opus
 // #include <opus/opus.h>
