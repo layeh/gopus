@@ -1,16 +1,12 @@
 package gopus
 
 // #cgo pkg-config: opus
-// #include <opus/opus.h>
+// #include "gopus.h"
 //
 // enum {
 //   gopus_application_voip = OPUS_APPLICATION_VOIP,
 //   gopus_application_audio = OPUS_APPLICATION_AUDIO,
 //   gopus_restricted_lowdelay = OPUS_APPLICATION_RESTRICTED_LOWDELAY,
-// };
-//
-// enum {
-//   gopus_ok = OPUS_OK,
 // };
 //
 //
@@ -24,7 +20,6 @@ package gopus
 import "C"
 
 import (
-	"errors"
 	"unsafe"
 )
 
@@ -34,10 +29,6 @@ const (
 	Voip               Application = C.gopus_application_voip
 	Audio              Application = C.gopus_application_audio
 	RestrictedLowDelay Application = C.gopus_restricted_lowdelay
-)
-
-var (
-	ErrUnknown = errors.New("an unknown error has occurred")
 )
 
 type Encoder struct {
@@ -50,8 +41,9 @@ func NewEncoder(sampleRate, channels int, application Application) (*Encoder, er
 	encoder.data = make([]byte, int(C.opus_encoder_get_size(C.int(channels))))
 	encoder.cEncoder = (*C.struct_OpusEncoder)(unsafe.Pointer(&encoder.data[0]))
 
-	if ret := C.opus_encoder_init(encoder.cEncoder, C.opus_int32(sampleRate), C.int(channels), C.int(application)); ret != C.gopus_ok {
-		return nil, ErrUnknown
+	ret := C.opus_encoder_init(encoder.cEncoder, C.opus_int32(sampleRate), C.int(channels), C.int(application))
+	if err := getErr(ret); err != nil {
+		return nil, err
 	}
 	return encoder, nil
 }
@@ -66,9 +58,8 @@ func (e *Encoder) Encode(pcm []int16, frameSize, maxDataBytes int) ([]byte, erro
 	encoded := int(encodedC)
 
 	if encoded < 0 {
-		return nil, ErrUnknown
+		return nil, getErr(C.int(encodedC))
 	}
-
 	return data[0:encoded], nil
 }
 
