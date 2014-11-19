@@ -2,6 +2,10 @@ package gopus
 
 // #cgo pkg-config: opus
 // #include "gopus.h"
+//
+// void gopus_resetstate(OpusDecoder *decoder) {
+//   opus_decoder_ctl(decoder, OPUS_RESET_STATE);
+// }
 import "C"
 
 import (
@@ -49,6 +53,10 @@ func (d *Decoder) Decode(data []byte, frameSize int, fec bool) ([]int16, error) 
 		return nil, getErr(cRet)
 	}
 	return output[:ret], nil
+}
+
+func (d *Decoder) ResetState() {
+	C.gopus_resetstate(d.cDecoder)
 }
 
 func CountFrames(data []byte) (int, error) {
