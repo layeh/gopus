@@ -17,6 +17,12 @@ package gopus
 // void gopus_setbitrate(OpusEncoder *encoder, int bitrate) {
 //   opus_encoder_ctl(encoder, OPUS_SET_BITRATE(bitrate));
 // }
+//
+// opus_int32 gopus_bitrate(OpusEncoder *encoder) {
+//   opus_int32 bitrate;
+//   opus_encoder_ctl(encoder, OPUS_GET_BITRATE(&bitrate));
+//   return bitrate;
+// }
 import "C"
 
 import (
@@ -75,4 +81,8 @@ func (e *Encoder) SetVbr(vbr bool) {
 
 func (e *Encoder) SetBitrate(bitrate int) {
 	C.gopus_setbitrate(e.cEncoder, C.int(bitrate))
+}
+
+func (e *Encoder) Bitrate() int {
+	return int(C.gopus_bitrate(e.cEncoder))
 }
