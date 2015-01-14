@@ -4,8 +4,8 @@ package gopus
 // #include "gopus.h"
 //
 // enum {
-//   gopus_application_voip = OPUS_APPLICATION_VOIP,
-//   gopus_application_audio = OPUS_APPLICATION_AUDIO,
+//   gopus_application_voip    = OPUS_APPLICATION_VOIP,
+//   gopus_application_audio   = OPUS_APPLICATION_AUDIO,
 //   gopus_restricted_lowdelay = OPUS_APPLICATION_RESTRICTED_LOWDELAY,
 // };
 //
@@ -22,6 +22,16 @@ package gopus
 //   opus_int32 bitrate;
 //   opus_encoder_ctl(encoder, OPUS_GET_BITRATE(&bitrate));
 //   return bitrate;
+// }
+//
+// void gopus_setapplication(OpusEncoder *encoder, int application) {
+//   opus_encoder_ctl(encoder, OPUS_SET_APPLICATION(application));
+// }
+//
+// opus_int32 gopus_application(OpusEncoder *encoder) {
+//   opus_int32 application;
+//   opus_encoder_ctl(encoder, OPUS_GET_APPLICATION(&application));
+//   return application;
 // }
 import "C"
 
@@ -85,4 +95,12 @@ func (e *Encoder) SetBitrate(bitrate int) {
 
 func (e *Encoder) Bitrate() int {
 	return int(C.gopus_bitrate(e.cEncoder))
+}
+
+func (e *Encoder) SetApplication(application Application) {
+	C.gopus_setapplication(e.cEncoder, C.int(application))
+}
+
+func (e *Encoder) Application() Application {
+	return Application(C.gopus_application(e.cEncoder))
 }
