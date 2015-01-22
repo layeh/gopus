@@ -7,6 +7,7 @@ package gopus
 //   gopus_application_voip    = OPUS_APPLICATION_VOIP,
 //   gopus_application_audio   = OPUS_APPLICATION_AUDIO,
 //   gopus_restricted_lowdelay = OPUS_APPLICATION_RESTRICTED_LOWDELAY,
+//   gopus_bitrate_max         = OPUS_BITRATE_MAX,
 // };
 //
 //
@@ -45,6 +46,10 @@ const (
 	Voip               Application = C.gopus_application_voip
 	Audio              Application = C.gopus_application_audio
 	RestrictedLowDelay Application = C.gopus_restricted_lowdelay
+)
+
+const (
+	BitrateMaximum = C.gopus_bitrate_max
 )
 
 type Encoder struct {
