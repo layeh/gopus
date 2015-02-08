@@ -1,7 +1,7 @@
 package gopus
 
 // #cgo !nopkgconfig pkg-config: opus
-// #include "gopus.h"
+// #include <opus.h>
 //
 // enum {
 //   gopus_application_voip    = OPUS_APPLICATION_VOIP,
