@@ -1,6 +1,6 @@
 package gopus
 
-// #cgo pkg-config: opus
+// #cgo !nopkgconfig pkg-config: opus
 // #include "gopus.h"
 //
 // enum {
