@@ -1,7 +1,7 @@
 package gopus
 
 // #cgo pkg-config: opus
-// #include "gopus.h"
+// #include <opus.h>
 //
 // void gopus_resetstate(OpusDecoder *decoder) {
 //   opus_decoder_ctl(decoder, OPUS_RESET_STATE);

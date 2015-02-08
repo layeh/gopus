@@ -1,6 +1,6 @@
 package gopus
 
-// #include "gopus.h"
+// #include <opus.h>
 //
 // enum {
 //   gopus_ok = OPUS_OK,
