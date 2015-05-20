@@ -34,6 +34,10 @@ package gopus
 //   opus_encoder_ctl(encoder, OPUS_GET_APPLICATION(&application));
 //   return application;
 // }
+//
+// void gopus_encoder_resetstate(OpusEncoder *encoder) {
+//   opus_encoder_ctl(encoder, OPUS_RESET_STATE);
+// }
 import "C"
 
 import (
@@ -108,4 +112,8 @@ func (e *Encoder) SetApplication(application Application) {
 
 func (e *Encoder) Application() Application {
 	return Application(C.gopus_application(e.cEncoder))
+}
+
+func (e *Encoder) ResetState() {
+	C.gopus_encoder_resetstate(e.cEncoder)
 }
