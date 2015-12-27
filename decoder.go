@@ -33,7 +33,10 @@ func NewDecoder(sampleRate, channels int) (*Decoder, error) {
 }
 
 func (d *Decoder) Decode(data []byte, frameSize int, fec bool) ([]int16, error) {
-	dataPtr := (*C.uchar)(unsafe.Pointer(&data[0]))
+	var dataPtr *C.uchar
+	if len(data) > 0 {
+		dataPtr = (*C.uchar)(unsafe.Pointer(&data[0]))
+	}
 	dataLen := C.opus_int32(len(data))
 
 	output := make([]int16, d.channels * frameSize)
