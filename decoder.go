@@ -39,7 +39,7 @@ func (d *Decoder) Decode(data []byte, frameSize int, fec bool) ([]int16, error) 
 	}
 	dataLen := C.opus_int32(len(data))
 
-	output := make([]int16, d.channels * frameSize)
+	output := make([]int16, d.channels*frameSize)
 	outputPtr := (*C.opus_int16)(unsafe.Pointer(&output[0]))
 
 	var cFec C.int
@@ -55,7 +55,7 @@ func (d *Decoder) Decode(data []byte, frameSize int, fec bool) ([]int16, error) 
 	if ret < 0 {
 		return nil, getErr(cRet)
 	}
-	return output[:ret], nil
+	return output[:ret*d.channels], nil
 }
 
 func (d *Decoder) ResetState() {
