@@ -1,7 +1,5 @@
 package gopus
 
-// +build arm
-
 // #cgo !nopkgconfig pkg-config: opus
 //
 // #include <opus.h>
