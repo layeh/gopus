@@ -1,7 +1,21 @@
 package gopus
 
+// +build arm
+
 // #cgo !nopkgconfig pkg-config: opus
+//
 // #include <opus.h>
+// enum {
+//   gopus_ok = OPUS_OK,
+//   gopus_bad_arg = OPUS_BAD_ARG,
+//   gopus_small_buffer = OPUS_BUFFER_TOO_SMALL,
+//   gopus_internal = OPUS_INTERNAL_ERROR,
+//   gopus_invalid_packet = OPUS_INVALID_PACKET,
+//   gopus_unimplemented = OPUS_UNIMPLEMENTED,
+//   gopus_invalid_state = OPUS_INVALID_STATE,
+//   gopus_alloc_fail = OPUS_ALLOC_FAIL,
+// };
+//
 //
 // enum {
 //   gopus_application_voip    = OPUS_APPLICATION_VOIP,
@@ -38,9 +52,14 @@ package gopus
 // void gopus_encoder_resetstate(OpusEncoder *encoder) {
 //   opus_encoder_ctl(encoder, OPUS_RESET_STATE);
 // }
+//
+// void gopus_decoder_resetstate(OpusDecoder *decoder) {
+//   opus_decoder_ctl(decoder, OPUS_RESET_STATE);
+// }
 import "C"
 
 import (
+	"errors"
 	"unsafe"
 )
 
@@ -116,4 +135,99 @@ func (e *Encoder) Application() Application {
 
 func (e *Encoder) ResetState() {
 	C.gopus_encoder_resetstate(e.cEncoder)
+}
+
+type Decoder struct {
+	data     []byte
+	cDecoder *C.struct_OpusDecoder
+	channels int
+}
+
+func NewDecoder(sampleRate, channels int) (*Decoder, error) {
+	decoder := &Decoder{}
+	decoder.data = make([]byte, int(C.opus_decoder_get_size(C.int(channels))))
+	decoder.cDecoder = (*C.struct_OpusDecoder)(unsafe.Pointer(&decoder.data[0]))
+
+	ret := C.opus_decoder_init(decoder.cDecoder, C.opus_int32(sampleRate), C.int(channels))
+	if err := getErr(ret); err != nil {
+		return nil, err
+	}
+	decoder.channels = channels
+
+	return decoder, nil
+}
+
+func (d *Decoder) Decode(data []byte, frameSize int, fec bool) ([]int16, error) {
+	var dataPtr *C.uchar
+	if len(data) > 0 {
+		dataPtr = (*C.uchar)(unsafe.Pointer(&data[0]))
+	}
+	dataLen := C.opus_int32(len(data))
+
+	output := make([]int16, d.channels*frameSize)
+	outputPtr := (*C.opus_int16)(unsafe.Pointer(&output[0]))
+
+	var cFec C.int
+	if fec {
+		cFec = 1
+	} else {
+		cFec = 0
+	}
+
+	cRet := C.opus_decode(d.cDecoder, dataPtr, dataLen, outputPtr, C.int(frameSize), cFec)
+	ret := int(cRet)
+
+	if ret < 0 {
+		return nil, getErr(cRet)
+	}
+	return output[:ret*d.channels], nil
+}
+
+func (d *Decoder) ResetState() {
+	C.gopus_decoder_resetstate(d.cDecoder)
+}
+
+func CountFrames(data []byte) (int, error) {
+	dataPtr := (*C.uchar)(unsafe.Pointer(&data[0]))
+	cLen := C.opus_int32(len(data))
+
+	cRet := C.opus_packet_get_nb_frames(dataPtr, cLen)
+	if err := getErr(cRet); err != nil {
+		return 0, err
+	}
+	return int(cRet), nil
+}
+
+var (
+	ErrBadArgument   = errors.New("bad argument")
+	ErrSmallBuffer   = errors.New("buffer is too small")
+	ErrInternal      = errors.New("internal error")
+	ErrInvalidPacket = errors.New("invalid packet")
+	ErrUnimplemented = errors.New("unimplemented")
+	ErrInvalidState  = errors.New("invalid state")
+	ErrAllocFail     = errors.New("allocation failed")
+	ErrUnknown       = errors.New("unknown error")
+)
+
+func getErr(code C.int) error {
+	switch code {
+	case C.gopus_ok:
+		return nil
+	case C.gopus_bad_arg:
+		return ErrBadArgument
+	case C.gopus_small_buffer:
+		return ErrSmallBuffer
+	case C.gopus_internal:
+		return ErrInternal
+	case C.gopus_invalid_packet:
+		return ErrInvalidPacket
+	case C.gopus_unimplemented:
+		return ErrUnimplemented
+	case C.gopus_invalid_state:
+		return ErrInvalidState
+	case C.gopus_alloc_fail:
+		return ErrAllocFail
+	default:
+		return ErrUnknown
+	}
 }
