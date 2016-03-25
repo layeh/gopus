@@ -13,7 +13,7 @@ gopus is a Go binding for the [Opus](http://www.opus-codec.org/) audio codec.
 
 ## License
 
-MIT
+Public domain
 
 ## Author
 
