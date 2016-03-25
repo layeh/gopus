@@ -9,7 +9,7 @@ gopus is a Go binding for the [Opus](http://www.opus-codec.org/) audio codec.
 ## Requirements
 
 - cgo
-- [opus](http://www.opus-codec.org/) development library (only if building on ARM)
+- [opus](http://www.opus-codec.org/) development library (only on platforms where the shared library is used)
 
 ## License
 
