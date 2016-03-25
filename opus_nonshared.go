@@ -1,3 +1,5 @@
+// +build amd64,cgo 386,cgo
+
 package gopus
 
 // #cgo linux darwin LDFLAGS: -lm

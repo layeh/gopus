@@ -1,3 +1,5 @@
+// +build !amd64,!386,cgo
+
 package gopus
 
 // #cgo !nopkgconfig pkg-config: opus
