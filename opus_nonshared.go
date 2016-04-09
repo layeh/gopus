@@ -64,8 +64,10 @@ package gopus
 // #include "opus-1.1.2/silk/log2lin.c"
 // #include "opus-1.1.2/silk/LPC_analysis_filter.c"
 // #include "opus-1.1.2/silk/LPC_inv_pred_gain.c"
+// #undef QA
 // #include "opus-1.1.2/silk/table_LSF_cos.c"
 // #include "opus-1.1.2/silk/NLSF2A.c"
+// #undef QA
 // #include "opus-1.1.2/silk/NLSF_stabilize.c"
 // #include "opus-1.1.2/silk/NLSF_VQ_weights_laroia.c"
 // #include "opus-1.1.2/silk/pitch_est_tables.c"
@@ -117,9 +119,14 @@ package gopus
 // #include "opus-1.1.2/silk/float/schur_FLP.c"
 // #include "opus-1.1.2/silk/float/sort_FLP.c"
 //
+// #undef PI
 // #include "opus-1.1.2/celt/bands.c"
+// OPUS_CUSTOM_NOSTATIC int opus_custom_encoder_get_size(const CELTMode *mode, int channels);
 // #include "opus-1.1.2/celt/celt.c"
+// int opus_custom_encoder_init(CELTEncoder *st, const CELTMode *mode, int channels);
 // #include "opus-1.1.2/celt/celt_encoder.c"
+// OPUS_CUSTOM_NOSTATIC int opus_custom_decoder_get_size(const CELTMode *mode, int channels);
+// OPUS_CUSTOM_NOSTATIC int opus_custom_decoder_init(CELTDecoder *st, const CELTMode *mode, int channels);
 // #include "opus-1.1.2/celt/celt_decoder.c"
 // #include "opus-1.1.2/celt/cwrs.c"
 // #include "opus-1.1.2/celt/entcode.c"

@@ -131,7 +131,7 @@ int celt_encoder_get_size(int channels)
    return opus_custom_encoder_get_size(mode, channels);
 }
 
-int opus_custom_encoder_get_size(const CELTMode *mode, int channels)
+OPUS_CUSTOM_NOSTATIC int opus_custom_encoder_get_size(const CELTMode *mode, int channels)
 {
    int size = sizeof(struct CELTEncoder)
          + (channels*mode->overlap-1)*sizeof(celt_sig)    /* celt_sig in_mem[channels*mode->overlap]; */
